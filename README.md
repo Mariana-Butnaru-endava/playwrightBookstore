@@ -86,6 +86,7 @@ demoqa-playwright-ts-framework/
 │   ├── e2e/
 │   │   └── api-ui-contract.spec.ts
 │   └── ui/
+|       ├── addBookToAccount.spec.ts
 │       ├── book-catalog.spec.ts
 │       └── login-and-profile.spec.ts
 └── docs/
