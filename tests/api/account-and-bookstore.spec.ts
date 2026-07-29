@@ -5,7 +5,7 @@ import { env } from '@config/env';
 import { CreateUserResponse, NotFound } from '@core/api/accountApi';
 
 test.describe('DemoQA Book Store API', () => {
-  test('@smoke should create user, generate token, authorize, add books and validate user profile data ',
+  test('@smoke should create user, generate token, add books, validate user profile data and delete user',
     async ({ accountApi, bookStoreApi, testUser }) => {
       console.log(`Testing with user: ${testUser.userName}`);
 
@@ -92,6 +92,9 @@ test.describe('DemoQA Book Store API', () => {
 
       if (env.deleteCreatedUser) {
         const deleteUserResponse = await accountApi.deleteUser(createdUser.userID, tokenPayload.token);
+        console.log(`delete user response: 
+          status: ${deleteUserResponse.status()};
+          statusText: ${deleteUserResponse.statusText()}`);
         expect(deleteUserResponse.ok()).toBeTruthy();
 
         userResponse = await accountApi.getUser(createdUser.userID, tokenPayload.token);
@@ -104,20 +107,21 @@ test.describe('DemoQA Book Store API', () => {
       }
     });
 
-  test('should retrieve a specific book by ISBN', async ({ bookStoreApi }) => {
-    const response = await bookStoreApi.getBook(knownBooks.designingEvolvableWebAPIs);
-    expect(response.ok()).toBeTruthy();
-    console.log(`Get book response: ${JSON.stringify(await response.json())}`);
+  test('should retrieve a specific book by ISBN',
+    async ({ bookStoreApi }) => {
+      const response = await bookStoreApi.getBook(knownBooks.designingEvolvableWebAPIs);
+      expect(response.ok()).toBeTruthy();
+      console.log(`Get book response: ${JSON.stringify(await response.json())}`);
 
-    const payload = await response.json();
-    expect(payload.isbn).toBe(knownBooks.designingEvolvableWebAPIs);
-    expect(payload.title).toContain('Designing Evolvable Web APIs');
-    expect(payload.description).toContain('Design and build Web APIs');
+      const payload = await response.json();
+      expect(payload.isbn).toBe(knownBooks.designingEvolvableWebAPIs);
+      expect(payload.title).toContain('Designing Evolvable Web APIs');
+      expect(payload.description).toContain('Design and build Web APIs');
 
-    const inexistentBook = await bookStoreApi.getBook('0000000000000');
-    expect(inexistentBook.ok()).toBeFalsy();
-    const msgInexistent = await inexistentBook.json();
-    console.log(`Get inexistent book response: ${JSON.stringify(msgInexistent)}`);
-    console.log(`message when not found: ${msgInexistent.message}`);
-  });
+      const inexistentBook = await bookStoreApi.getBook('0000000000000');
+      expect(inexistentBook.ok()).toBeFalsy();
+      const msgInexistent = await inexistentBook.json();
+      console.log(`Get inexistent book response: ${JSON.stringify(msgInexistent)}`);
+      console.log(`message when not found: ${msgInexistent.message}`);
+    });
 });

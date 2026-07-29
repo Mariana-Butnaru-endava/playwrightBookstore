@@ -10,7 +10,7 @@ import { expectGroupToContain } from '@core/utils/assertions';
 
 
 test.describe('API to UI contract flow', () => {
-  test('should show in UI the book added through backend API, delete book from UI',
+  test('should show in UI the books added through API, delete 1 or all books from UI',
     async ({ page, accountApi, bookStoreApi, testUser }) => {
       test.slow();
       const createdUser = await accountApi.createUser(testUser);
@@ -44,13 +44,21 @@ test.describe('API to UI contract flow', () => {
       await profilePage.waitForLoaded();
       await profilePage.expectUsername(createdUser.username);
 
+      //get UI initial state of books existent in account
+      let books = await profilePage.getBooksFromAccount();
+      console.log('Books initially in account: ', books.length);
+      expect(books.length).toBe(3);
       for (const book of savedUserPayload.books) {
         await profilePage.expectBookInAccount(book.title, book.author, book.publisher);
       }
+      
+      //delete 1 book
       await profilePage.deleteBookByTitle('Learning JavaScript Design Patterns');
-      let books = await profilePage.getBooksFromAccount();
+      books = await profilePage.getBooksFromAccount();
       console.log('Books after 1 book deleted: ', books.length);
+      expect(books.length).toBe(2);
 
+      //delete all books from account
       await profilePage.deleteAllBooks();
       await profilePage.logout();
       await loginPage.goto();
@@ -60,13 +68,21 @@ test.describe('API to UI contract flow', () => {
       books = await profilePage.getBooksFromAccount();
       console.log('Books after all deleted: ', books.length);
       expect(books.length).toBe(0);
-      // getUser = await accountApi.getUser(createdUser.userID, tokenPayload.token);
-      // console.log('Get user status: ', getUser.status());
-      // userPayload = await getUser.json() as CreateUserResponse;
-      // console.log('User after all books deleted from UI: ', userPayload);
-      // expect(userPayload.books.length).toBe(0);
+      //delete account from UI or from API is not working in this case, commenting
+      //await profilePage.deleteAccount();
+
       //delete account from API
-      await accountApi.deleteUser(createdUser.userID, tokenPayload.token).catch(() => {});
+      // const deleteUserResponse = await accountApi.deleteUser(createdUser.userID, tokenPayload.token);
+      // //.catch(() => {})
+      // console.log(`
+      //   delete user status: ${deleteUserResponse.status()};
+      //   delete user response: ${deleteUserResponse.statusText()}
+      // `);
+      // getUser = await accountApi.getUser(createdUser.userID, tokenPayload.token);
+      // console.log(`
+      //   getUser status: ${getUser.status()};
+      //   getUser statusText: ${getUser.statusText()}
+      // `);
     });
 
   test('create user from API, add and delete book from UI',
@@ -82,56 +98,62 @@ test.describe('API to UI contract flow', () => {
       await profilePage.clickOnLoginLink();
 
       await loginPage.login(testUser.userName, testUser.password);
+
+      //add a book to account
       await profilePage.goToBookstore();
       const addBook = await booksPage.addBookToAccount('Git Pocket Guide');
       console.log("status of adding: ", addBook.status, addBook.message);
+      expect(addBook.status).toMatch(/added/i);
+      expect(addBook.message).toContain('Book added to your collection.');
 
-      expect(addBook.status).toBe('added');
-      //expect message
-      console.log("message:", addBook.message);
+      //verify books in account
       var booksInAccount = await profilePage.getBooksFromAccount();
-      console.log("books in account after adding an existent book:", booksInAccount);
+      console.log("books in account after adding a book:", booksInAccount);
       expectGroupToContain(booksInAccount, 'Git Pocket Guide');
       expect(booksInAccount.length).toBe(1);
-      //delete book
+
+      //delete book from account
       const deleteMessage = await profilePage.deleteBookByTitle('Git Pocket Guide');
+      //matches case insensitive
       expect(deleteMessage).toMatch(/Book deleted|unknown/i);
       booksInAccount = await profilePage.getBooksFromAccount();
       expect(booksInAccount.length).toBe(0);
     }
   );
 
-  test('Should show in book detail page fields from API',
+  test('Should show in book detail UI page, matching fields from API getBook response',
     async ({ page, bookStoreApi }) => {
+      //get book details from API
       const bookDetail = await bookStoreApi.getBook(knownBooks.designingEvolvableWebAPIs);
       expect(bookDetail.ok()).toBeTruthy();
       const bookDetails = await bookDetail.json()
       console.log('API book details:', bookDetails);
-      console.log('Titlu: ', bookDetails.title);
+      console.log('Title: ', bookDetails.title);
 
+      //get book details from UI
       const bookstorePage = new BooksPage(page);
       const detailsPage = new BookDetailsPage(page);
       await bookstorePage.goto();
       await bookstorePage.expectLoaded();
       await bookstorePage.openBookByTitle('Designing Evolvable Web APIs with ASP.NET');
       await detailsPage.expectTitle(bookDetails.title);
-
     });
 
-  test('logout from UI account created through API', async ({ page, accountApi, testUser }) => {
-    const createdUser = await accountApi.createUser(testUser);
-    expect(createdUser.userID).not.toBeFalsy();
-    console.log('username created: ', createdUser.username);
+  test('logout from UI account created through API',
+    async ({ page, accountApi, testUser }) => {
+      const createdUser = await accountApi.createUser(testUser);
+      expect(createdUser.userID).not.toBeFalsy();
+      console.log('username created: ', createdUser.username);
 
-    const loginPage = new LoginPage(page);
-    const profilePage = new ProfilePage(page);
+      const loginPage = new LoginPage(page);
+      const profilePage = new ProfilePage(page);
 
-    await loginPage.goto();
-    await loginPage.login(testUser.userName, testUser.password);
-    await profilePage.waitForLoaded();
-    await profilePage.expectLogoutVisible();
-    await profilePage.logout();
+      await loginPage.goto();
+      await loginPage.login(testUser.userName, testUser.password);
+      await profilePage.waitForLoaded();
+      await profilePage.expectLogoutVisible();
+      await profilePage.logout();
 
-    await loginPage.waitForLoaded();
-  })
+      await loginPage.waitForLoaded();
+    })
 });
