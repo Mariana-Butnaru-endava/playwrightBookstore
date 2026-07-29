@@ -68,7 +68,7 @@ export class ProfilePage {
 
     const message = dialog.message();
     console.log(`Dialog message: ${message}`);
-    await dialog.dismiss().catch(() => {});
+    await dialog.dismiss().catch(() => { });
     return message;
   }
 
@@ -79,17 +79,17 @@ export class ProfilePage {
       await expect(this.page.getByLabel('Delete All Books'))
         .toContainText('Do you want to delete all books?');
 
-      await this.page.getByRole('button', { name: 'OK', exact: true }).click().catch(() => {});
+      await this.page.getByRole('button', { name: 'OK', exact: true }).click().catch(() => { });
     }
 
     const closeButton = this.page.getByRole('button', { name: 'Close' });
 
     if (await closeButton.isVisible().catch(() => false)) {
-      await closeButton.click().catch(() => {});
+      await closeButton.click().catch(() => { });
     }
 
-    await this.page.reload().catch(() => {});
-    await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+    await this.page.reload().catch(() => { });
+    await this.page.waitForLoadState('domcontentloaded').catch(() => { });
   }
 
   async getBooksFromAccount(): Promise<string[]> {
@@ -122,7 +122,7 @@ export class ProfilePage {
     if (await this.page.getByRole('button', { name: 'Logout' }).isVisible().catch(() => false)) {
       await this.page.getByRole('button', { name: 'Logout' }).click();
     }
-    await expect(this.page).toHaveURL(/\/login/).catch(() => {});
+    await expect(this.page).toHaveURL(/\/login/).catch(() => { });
   }
 
   async deleteAccount(): Promise<void> {
@@ -135,15 +135,16 @@ export class ProfilePage {
     if (dialog) {
       const message = dialog.message();
       console.log(`Dialog message: ${message}`);
-      await dialog.dismiss().catch(() => {});
+      await dialog.dismiss().catch(() => { });
     }
 
     const closeButton = this.page.getByRole('button', { name: 'Close' });
     if (await closeButton.isVisible().catch(() => false)) {
-      await closeButton.click().catch(() => {});
+      await closeButton.click().catch(() => { });
     }
 
-    await this.page.reload().catch(() => {});
-    await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+    await this.page.reload().catch(() => { });
+    await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+    //expect(this.page.getByText('User not found!')).toBeVisible();
   }
 }
