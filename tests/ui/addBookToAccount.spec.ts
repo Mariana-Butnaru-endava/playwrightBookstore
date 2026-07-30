@@ -1,18 +1,14 @@
-import type { Page } from '@playwright/test';
 import { AccountApi } from '@core/api/accountApi';
 import { TestUser } from '@core/utils/testData';
 import { expectGroupToContain } from '@core/utils/assertions';
 import { test, expect } from '@fixtures/testFixtures';
-import { BooksPage } from '@pages/booksPage';
 import { LoginPage } from '@pages/loginPage';
 import { ProfilePage } from '@pages/profilePage';
 
-async function loginWithNewUser(page: Page, accountApi: AccountApi, testUser: TestUser) {
+async function loginWithNewUser(loginPage: LoginPage, profilePage: ProfilePage, accountApi: AccountApi, testUser: TestUser) {
   const createdUser = await accountApi.createUser(testUser);
   const tokenResponse = await accountApi.generateToken(testUser);
   console.log('created user: ', createdUser.username);
-  const loginPage = new LoginPage(page);
-  const profilePage = new ProfilePage(page);
 
   await profilePage.goto();
   await profilePage.waitForLoaded();
@@ -28,12 +24,10 @@ async function loginWithNewUser(page: Page, accountApi: AccountApi, testUser: Te
 
 test.describe('Login from profile and add book', () => {
   test('add book from UI to account, when book not already existent in account',
-    async ({ page, accountApi, testUser }) => {
-      const { createdUser, tokenResponse, profilePage } = await loginWithNewUser(page, accountApi, testUser);
+    async ({ loginPage, profilePage, booksPage, accountApi, testUser }) => {
+      const { createdUser, tokenResponse } = await loginWithNewUser(loginPage, profilePage, accountApi, testUser);
 
       try {
-        const booksPage = new BooksPage(page);
-
         await profilePage.goToBookstore();
         await booksPage.expectLoaded();
 
@@ -83,9 +77,9 @@ test.describe('Login from profile and add book', () => {
     });
 
   test('add books from UI, when book is already existent in account',
-    async ({ page, accountApi, testUser }) => {
+    async ({ loginPage, profilePage, booksPage, accountApi, testUser }) => {
       test.slow();
-      const { createdUser, tokenResponse, profilePage } = await loginWithNewUser(page, accountApi, testUser);
+      const { createdUser, tokenResponse } = await loginWithNewUser(loginPage, profilePage, accountApi, testUser);
       // not working at this point to return to API operations, might be token change
       // const addBooksResponse = await bookStoreApi.addBooks(
       //   createdUser.userID,
@@ -95,7 +89,6 @@ test.describe('Login from profile and add book', () => {
       // expect(addBooksResponse.ok()).toBeTruthy();
 
       try {
-        const booksPage = new BooksPage(page);
         await profilePage.expectTableVisible();
         await profilePage.goToBookstore();
         await booksPage.expectLoaded();
