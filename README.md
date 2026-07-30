@@ -1,2 +1,2 @@
 # playwrightBookstore
-playwright BE/FE for Bookstore application
+playwright with typescript BE/FE for Bookstore application
