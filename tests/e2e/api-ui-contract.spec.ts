@@ -51,7 +51,7 @@ test.describe('API to UI contract flow', () => {
       for (const book of savedUserPayload.books) {
         await profilePage.expectBookInAccount(book.title, book.author, book.publisher);
       }
-      
+
       //delete 1 book
       await profilePage.deleteBookByTitle('Learning JavaScript Design Patterns');
       books = await profilePage.getBooksFromAccount();
@@ -112,12 +112,34 @@ test.describe('API to UI contract flow', () => {
       expectGroupToContain(booksInAccount, 'Git Pocket Guide');
       expect(booksInAccount.length).toBe(1);
 
+      let userState = await page.context().storageState({
+        path: 'state/user.json',
+      }
+      );
+      let tokenUI = userState.cookies.find(n => n.name.match(/token/))?.value
+      console.log('user state: ', tokenUI);
+
       //delete book from account
       const deleteMessage = await profilePage.deleteBookByTitle('Git Pocket Guide');
       //matches case insensitive
       expect(deleteMessage).toMatch(/Book deleted|unknown/i);
       booksInAccount = await profilePage.getBooksFromAccount();
       expect(booksInAccount.length).toBe(0);
+      await profilePage.logout();
+
+      //delete user
+      const deleteUserResponse = await accountApi.deleteUser(createUser.userID, tokenUI!);
+      console.log(`delete user response: 
+          delete status: ${deleteUserResponse.status()};
+          statusText: ${deleteUserResponse.statusText()}`);
+      const getUser = await accountApi.getUser(createUser.userID, tokenUI);
+      console.log(`get user response:
+            get status: ${getUser.status()};
+            statusText: ${getUser.statusText()}`);
+
+      await loginPage.goto();
+      await loginPage.login(testUser.userName, testUser.password);
+      await loginPage.invalidLoginResult();
     }
   );
 
