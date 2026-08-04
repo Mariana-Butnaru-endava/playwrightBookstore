@@ -22,9 +22,12 @@ export class LoginPage {
     await this.page.locator('#login').click();
   }
 
-    async waitForLoaded(): Promise<void> {
+  async waitForLoaded(): Promise<void> {
     await expect(this.page, 'Expect login page to be loaded').toHaveURL(new RegExp(`${env.loginPath}$`));
     await expect(this.page.getByText('Login in Book Store')).toBeVisible();
   }
 
+  async invalidLoginResult() {
+    await expect(this.page.getByText("Invalid username or password!")).toBeVisible();
+  }
 }

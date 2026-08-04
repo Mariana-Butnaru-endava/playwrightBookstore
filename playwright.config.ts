@@ -46,11 +46,15 @@ export default defineConfig({
     //   }
     // },
     // {
-    //   name: 'api',
-    //   testMatch: /.*\/api\/.*\.spec\.ts/,
-    //   use: {
-    //     browserName: 'chromium'
-    //   }
-    // }
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
+    {
+      name: 'api',
+      testMatch: /.*\/api\/.*\.spec\.ts/,
+      use: {
+        browserName: 'chromium'
+      }
+    }
   ]
 });
