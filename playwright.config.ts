@@ -2,12 +2,15 @@ import { defineConfig, devices } from '@playwright/test';
 import { env } from './src/config/env';
 
 export default defineConfig({
+//export const baseConfig = defineConfig({
   testDir: './tests',
   testIgnore: ['**/bulkGeneratedTest.spec.ts'],
   timeout: 60_000,
   expect: {
     timeout: 15_000,
   },
+  globalSetup: require.resolve('./tests/helpers/global-setup.ts'),
+  globalTeardown: require.resolve('./tests/helpers/global-teardown.ts'),
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -15,7 +18,7 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
     ['list'],
-    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: false }]
+    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: true }]
   ],
   use: {
     baseURL: env.baseUrl,
@@ -35,26 +38,29 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        browserName: 'chromium'
+        browserName: 'chromium',
+        launchOptions: {
+          args: ['--start-maximized']
+        }
       }
     },
-    // {
-    //   name: 'firefox',
-    //   use: {
-    //     ...devices['Desktop Firefox'],
-    //     browserName: 'firefox'
-    //   }
-    // },
+    {
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        browserName: 'firefox'
+      }
+    },
     // {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },
     // },
-    {
-      name: 'api',
-      testMatch: /.*\/api\/.*\.spec\.ts/,
-      use: {
-        browserName: 'chromium'
-      }
-    }
+    // {
+    //   name: 'api',
+    //   testMatch: /.*\/api\/.*\.spec\.ts/,
+    //   use: {
+    //     browserName: 'chromium'
+    //   }
+    // }
   ]
 });

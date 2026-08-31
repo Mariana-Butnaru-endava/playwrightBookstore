@@ -25,8 +25,8 @@ test.describe('API to UI contract flow', () => {
       );
       expect(addBookResponse.ok(), 'Books successfuly added to user account').toBeTruthy();
 
-      var getUser = await accountApi.getUser(createdUser.userID, tokenPayload.token);
-      var userPayload = await getUser.json();
+      let getUser = await accountApi.getUser(createdUser.userID, tokenPayload.token);
+      let userPayload = await getUser.json();
       const savedResponsePath = path.join(process.cwd(), 'test-results', `getUser-${createdUser.userID}.json`);
       await fs.mkdir(path.dirname(savedResponsePath), { recursive: true });
       await fs.writeFile(savedResponsePath, JSON.stringify(userPayload, null, 2), 'utf-8');
@@ -107,7 +107,7 @@ test.describe('API to UI contract flow', () => {
       expect(addBook.message).toContain('Book added to your collection.');
 
       //verify books in account
-      var booksInAccount = await profilePage.getBooksFromAccount();
+      let booksInAccount = await profilePage.getBooksFromAccount();
       console.log("books in account after adding a book:", booksInAccount);
       expectGroupToContain(booksInAccount, 'Git Pocket Guide');
       expect(booksInAccount.length).toBe(1);

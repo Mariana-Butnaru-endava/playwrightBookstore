@@ -24,6 +24,7 @@ async function loginWithNewUser(loginPage: LoginPage, profilePage: ProfilePage, 
 
 test.describe('Login from profile and add book', () => {
   test('add book from UI to account, when book not already existent in account',
+    { tag: "@smoke" },
     async ({ loginPage, profilePage, booksPage, accountApi, testUser }) => {
       const { createdUser, tokenResponse } = await loginWithNewUser(loginPage, profilePage, accountApi, testUser);
 
@@ -94,7 +95,7 @@ test.describe('Login from profile and add book', () => {
         await booksPage.expectLoaded();
 
         //add book from UI
-        var addBook = await booksPage.addBookToAccount('Git Pocket Guide');
+        let addBook = await booksPage.addBookToAccount('Git Pocket Guide');
         console.log('status:', addBook.status);
         console.log('message:', addBook.message);
         const initialNrOfBooksInAccount = await profilePage.getBooksFromAccount();

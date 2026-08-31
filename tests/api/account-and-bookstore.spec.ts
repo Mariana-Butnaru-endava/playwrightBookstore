@@ -36,9 +36,9 @@ test.describe('DemoQA Book Store API', () => {
       );
       expect(addBooksResponse.ok()).toBeTruthy();
 
-      var userResponse = await accountApi.getUser(createdUser.userID, tokenPayload.token);
+      let userResponse = await accountApi.getUser(createdUser.userID, tokenPayload.token);
       expect(userResponse.ok()).toBeTruthy();
-      var userPayload = await userResponse.json();
+      let userPayload = await userResponse.json();
 
       console.log(`User profile response: ${JSON.stringify(userPayload)}`);
       //console.log(`User profile response: ${JSON.stringify(await userResponse.json())}`);

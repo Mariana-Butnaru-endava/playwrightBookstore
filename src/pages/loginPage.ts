@@ -15,9 +15,12 @@ export class LoginPage {
   }
 
   async login(userName: string, password: string): Promise<void> {
+    await expect(this.page).toHaveTitle('demosite');
+    await expect(this.page.locator('//h1')).toHaveText("Login");
+
     //await this.page.locator('#userName').fill(userName);
     await this.userNameFld.fill(userName);
-    await this.page.locator('#password').fill(password);
+    await this.page.locator('#password').fill(password,{timeout:10_000});
     //await expect(this.userNameFld, 'Name field is populated correctly').toHaveText(userName);
     await this.page.locator('#login').click();
   }
@@ -29,5 +32,7 @@ export class LoginPage {
 
   async invalidLoginResult() {
     await expect(this.page.getByText("Invalid username or password!")).toBeVisible();
+    await expect(this.page.locator('#name')).toContainText('Invalid username or password!',{timeout: 5_000});
+      
   }
 }
