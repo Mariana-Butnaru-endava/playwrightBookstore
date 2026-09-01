@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Allure CLI
+        run: npm install -D allure-commandline
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
@@ -32,12 +35,24 @@ jobs:
       - name: Run tests
         run: npm run test:all
 
+      - name: Generate Allure report
+        if: always()
+        run: npx allure generate ./allure-results --clean -o ./allure-report
+
       - name: Upload Playwright HTML report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 7
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-report
+          path: allure-report/
           retention-days: 7
 
       - name: Upload Allure results
