@@ -4,6 +4,7 @@
   "description": "Scalable Playwright + TypeScript test automation framework for DemoQA UI and API validation.",
   "private": true,
   "scripts": {
+    "test:debug": "DEBUG=pw:api npx playwright test --grep @justme",
     "test:all": "cross-env NODE_OPTIONS=--no-deprecation playwright test",
     "test:ui": "cross-env NODE_OPTIONS=--no-deprecation playwright test tests/ui tests/e2e",
     "test:ui:headed": "cross-env NODE_OPTIONS=--no-deprecation playwright test tests/ui tests/e2e --headed",
@@ -14,11 +15,17 @@
     "allure:open": "npx allure open ./allure-report"
   },
   "devDependencies": {
-    "@playwright/test": "^1.54.2",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^22.10.2",
     "allure-playwright": "^3.10.2",
+    "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
+    "csv-parse": "^7.0.2",
     "dotenv": "^16.5.0",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1105.0",
+    "kafkajs": "^2.2.4"
   }
 }
