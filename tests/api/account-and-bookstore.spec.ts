@@ -3,6 +3,7 @@ import { knownBooks } from '@core/constants/books';
 import { expectBookIsPresent } from '@core/utils/assertions';
 import { env } from '@config/env';
 import { CreateUserResponse, NotFound } from '@core/api/accountApi';
+import fileHelper from 'tests/helpers/file-helper';
 
 test.describe('DemoQA Book Store API', () => {
   test('@smoke should create user, generate token, add books, validate user profile data and delete user',
@@ -35,10 +36,12 @@ test.describe('DemoQA Book Store API', () => {
         tokenPayload.token
       );
       expect(addBooksResponse.ok()).toBeTruthy();
+      //expect(addBooksResponse.status()).toBe(200);
 
       let userResponse = await accountApi.getUser(createdUser.userID, tokenPayload.token);
       expect(userResponse.ok()).toBeTruthy();
       let userPayload = await userResponse.json();
+      fileHelper.writeFile(`${process.cwd()}/test-results/userWithBooks.json`, userPayload);
 
       console.log(`User profile response: ${JSON.stringify(userPayload)}`);
       //console.log(`User profile response: ${JSON.stringify(await userResponse.json())}`);

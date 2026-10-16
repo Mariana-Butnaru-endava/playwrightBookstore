@@ -18,5 +18,5 @@
       "@fixtures/*": ["src/fixtures/*"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts", "src/core/constants/invalid-user.csv"]
 }
