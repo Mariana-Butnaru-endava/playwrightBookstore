@@ -40,17 +40,17 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         browserName: 'chromium',
         launchOptions: {
-          args: ['--start-maximized']
+          args: ["--start-maximized","--disable-blink-features=AutomationControlled", "--disable-features=IsolateOrigins,site-per-process", "--allow-no-sandbox-job"]
         }
       }
     },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        browserName: 'firefox'
-      }
-    },
+    // {
+    //   name: 'firefox',
+    //   use: {
+    //     ...devices['Desktop Firefox'],
+    //     browserName: 'firefox'
+    //   }
+    // },
     // {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },

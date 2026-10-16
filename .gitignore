@@ -5,3 +5,4 @@ allure-results/
 allure-report/
 .env
 *.log
+debug
