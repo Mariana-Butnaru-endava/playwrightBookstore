@@ -1,4 +1,4 @@
-testId,userName,password
-TC001,invalidUser,Password123!
-TC002,1234," "
-TC003,"#$%&*","123"
+testId,userName,password,expectedMsg
+TC001,invalidUser,Password123!,"Invalid username or password!"
+TC002,1234," ","Invalid username or password!"
+TC003,"#$%&*","123","Invalid username or password!"

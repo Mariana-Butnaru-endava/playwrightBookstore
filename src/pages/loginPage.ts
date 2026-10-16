@@ -30,9 +30,8 @@ export class LoginPage {
     await expect(this.page.getByText('Login in Book Store')).toBeVisible();
   }
 
-  async invalidLoginResult() {
-    await expect(this.page.getByText("Invalid username or password!")).toBeVisible();
-    await expect(this.page.locator('#name')).toContainText('Invalid username or password!',{timeout: 5_000});
-      
+  async invalidLoginResult(errMessage: string = "Invalid username or password!") {
+    await expect(this.page.getByText(errMessage)).toBeVisible();
+    await expect(this.page.locator('#name')).toContainText(errMessage,{timeout: 5_000});
   }
 }
