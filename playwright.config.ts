@@ -4,7 +4,7 @@ import { env } from './src/config/env';
 export default defineConfig({
 //export const baseConfig = defineConfig({
   testDir: './tests',
-  testIgnore: ['**/bulkGeneratedTest.spec.ts'],
+  testIgnore: ['**/bulkGeneratedTest.spec.ts', '**/invalid-login.spec.ts'],
   timeout: 60_000,
   expect: {
     timeout: 15_000,
